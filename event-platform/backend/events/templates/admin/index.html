@@ -1,0 +1,13 @@
+{% extends "admin/index.html" %}
+
+{% block sidebar %}
+{{ block.super }}
+<div class="app-events module">
+    <h2>Analytics</h2>
+    <div style="padding: 15px; text-align: center;">
+        <a href="/admin/analytics/" style="display: block; background: #417690; color: white; padding: 10px; border-radius: 4px; text-decoration: none; font-weight: bold;">
+            📊 View Analytics Dashboard
+        </a>
+    </div>
+</div>
+{% endblock %}

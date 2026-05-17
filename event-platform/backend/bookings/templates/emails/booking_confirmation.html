@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body { font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #0f172a; margin: 0; padding: 0; color: #f8fafc; }
+        .wrapper { width: 100%; padding: 40px 0; background-color: #0f172a; }
+        .container { max-width: 600px; margin: 0 auto; background: linear-gradient(145deg, #1e293b 0%, #0f172a 100%); border: 1px solid rgba(255,255,255,0.1); border-radius: 24px; overflow: hidden; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); }
+        .header { background: linear-gradient(90deg, #6366f1 0%, #a855f7 100%); padding: 40px 20px; text-align: center; }
+        .header h1 { margin: 0; font-size: 28px; font-weight: 800; letter-spacing: -0.025em; color: #ffffff; }
+        .content { padding: 40px; }
+        .greeting { font-size: 20px; font-weight: 600; margin-bottom: 24px; color: #ffffff; }
+        .event-card { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 16px; padding: 24px; margin-bottom: 32px; }
+        .event-title { font-size: 22px; font-weight: 700; color: #6366f1; margin: 0 0 16px 0; }
+        .detail-item { display: flex; margin-bottom: 12px; font-size: 15px; color: #94a3b8; }
+        .detail-label { font-weight: 600; width: 100px; color: #cbd5e1; }
+        .ticket-id { display: inline-block; padding: 12px 24px; background: rgba(99, 102, 241, 0.1); border: 1px dashed #6366f1; border-radius: 12px; color: #818cf8; font-family: monospace; font-size: 18px; font-weight: 700; margin-top: 8px; }
+        .footer { padding: 32px; text-align: center; border-top: 1px solid rgba(255, 255, 255, 0.05); }
+        .footer p { font-size: 14px; color: #64748b; margin: 0; }
+        .btn { display: inline-block; padding: 16px 32px; background: #6366f1; color: #ffffff !important; text-decoration: none; border-radius: 12px; font-weight: 700; margin-top: 24px; box-shadow: 0 10px 15px -3px rgba(99, 102, 241, 0.4); }
+    </style>
+</head>
+<body>
+    <div class="wrapper">
+        <div class="container">
+            <div class="header">
+                <h1>Ticket Confirmed! 🎉</h1>
+            </div>
+            <div class="content">
+                <p class="greeting">Hi {{ user.username }},</p>
+                <p>Your journey to <strong>{{ event.title }}</strong> is officially booked. Get ready for an unforgettable experience!</p>
+                
+                <div class="event-card">
+                    <h3 class="event-title">{{ event.title }}</h3>
+                    <div class="detail-item"><span class="detail-label">Date:</span> {{ event.date }}</div>
+                    <div class="detail-item"><span class="detail-label">Time:</span> {{ event.time }}</div>
+                    <div class="detail-item"><span class="detail-label">Location:</span> {{ event.location }}, {{ event.city }}</div>
+                    <div class="detail-item"><span class="detail-label">Pass Type:</span> {{ ticket_type.name }} (x{{ booking.quantity }})</div>
+                    
+                    <div style="margin-top: 24px;">
+                        <span class="detail-label">Digital Ticket ID:</span><br/>
+                        <div class="ticket-id">{{ booking.digital_ticket_id }}</div>
+                    </div>
+                </div>
+
+                <p style="text-align: center; color: #94a3b8; font-size: 15px;">A scannable QR Code pass has been attached to this email. Please keep it handy for verification at the venue entrance.</p>
+            </div>
+            <div class="footer">
+                <p>&copy; 2026 Event Platform India. All rights reserved.</p>
+                <p style="margin-top: 8px;">Unsubscribe | Privacy Policy</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,86 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block extrastyle %}
+{{ block.super }}
+<style>
+    .dashboard-container { display: flex; flex-wrap: wrap; gap: 20px; padding: 20px; }
+    .metric-card { flex: 1; min-width: 250px; background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); border-left: 5px solid #417690; }
+    .metric-title { font-size: 14px; color: #666; text-transform: uppercase; margin-bottom: 10px; }
+    .metric-value { font-size: 28px; font-weight: bold; color: #333; }
+    .chart-container { flex: 1; min-width: 400px; background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+</style>
+{% endscript %}
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+    <div class="dashboard-container">
+        <!-- Top Level Metrics -->
+        <div class="metric-card">
+            <div class="metric-title">Total Bookings</div>
+            <div class="metric-value">{{ total_bookings }}</div>
+        </div>
+        <div class="metric-card" style="border-left-color: #28a745;">
+            <div class="metric-title">Total Revenue</div>
+            <div class="metric-value">₹{{ total_revenue }}</div>
+        </div>
+    </div>
+
+    <div class="dashboard-container">
+        <!-- Popular Events Chart -->
+        <div class="chart-container">
+            <h2>Popular Events</h2>
+            <canvas id="popularEventsChart"></canvas>
+        </div>
+
+        <!-- User Engagement Chart -->
+        <div class="chart-container">
+            <h2>User Engagement (Last 7 Days)</h2>
+            <canvas id="engagementChart"></canvas>
+        </div>
+    </div>
+</div>
+
+<!-- Include Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // Popular Events Chart
+        const popularCtx = document.getElementById('popularEventsChart').getContext('2d');
+        new Chart(popularCtx, {
+            type: 'bar',
+            data: {
+                labels: {{ popular_labels|safe }},
+                datasets: [{
+                    label: 'Number of Bookings',
+                    data: {{ popular_data|safe }},
+                    backgroundColor: 'rgba(65, 118, 144, 0.6)',
+                    borderColor: 'rgba(65, 118, 144, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: { scales: { y: { beginAtZero: true } } }
+        });
+
+        // Engagement Chart
+        const engagementCtx = document.getElementById('engagementChart').getContext('2d');
+        new Chart(engagementCtx, {
+            type: 'line',
+            data: {
+                labels: {{ engagement_labels|safe }},
+                datasets: [{
+                    label: 'Bookings Per Day',
+                    data: {{ engagement_data|safe }},
+                    backgroundColor: 'rgba(40, 167, 69, 0.2)',
+                    borderColor: 'rgba(40, 167, 69, 1)',
+                    borderWidth: 2,
+                    fill: true,
+                    tension: 0.3
+                }]
+            },
+            options: { scales: { y: { beginAtZero: true } } }
+        });
+    });
+</script>
+{% endblock %}
