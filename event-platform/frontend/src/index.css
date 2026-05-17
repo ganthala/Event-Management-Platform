@@ -166,6 +166,16 @@ select option {
   font-size: 0.9rem;
 }
 
+.success-message {
+  background: rgba(16, 185, 129, 0.1);
+  color: #34d399;
+  padding: 1rem;
+  border-radius: 0.75rem;
+  margin-bottom: 2rem;
+  border: 1px solid rgba(16, 185, 129, 0.2);
+  font-size: 0.9rem;
+}
+
 .switch-mode a {
   color: var(--primary);
   text-decoration: none;

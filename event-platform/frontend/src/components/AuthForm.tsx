@@ -11,11 +11,13 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthSuccess }) => {
   const [email, setEmail] = useState('');
   const [role, setRole] = useState('attendee');
   const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+    setSuccess('');
     setLoading(true);
 
     const endpoint = isLogin ? 'login/' : 'register/';
@@ -49,7 +51,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthSuccess }) => {
           onAuthSuccess(data.access, userRole);
         } else {
           setIsLogin(true);
-          setError('Registration successful! Please login.');
+          setSuccess('Registration successful! Please login.');
         }
       } else {
         setError(data.detail || data.error || 'Something went wrong');
@@ -91,6 +93,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthSuccess }) => {
             <p style={{ fontSize: '0.9rem' }}>Please enter your credentials.</p>
           </div>
 
+          {success && <div className="success-message">{success}</div>}
           {error && <div className="error-message">{error}</div>}
 
           <form onSubmit={handleSubmit} autoComplete="off">
@@ -128,7 +131,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthSuccess }) => {
                 value={password} 
                 onChange={(e) => setPassword(e.target.value)} 
                 required 
-                autoComplete="new-password"
+                autoComplete={isLogin ? "current-password" : "new-password"}
               />
             </div>
 
@@ -151,7 +154,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthSuccess }) => {
             <span style={{ color: 'var(--text-muted)' }}>
               {isLogin ? "Don't have an account? " : "Already have an account? "}
             </span>
-            <a href="#" onClick={(e) => { e.preventDefault(); setIsLogin(!isLogin); setError(''); }}>
+            <a href="#" onClick={(e) => { e.preventDefault(); setIsLogin(!isLogin); setError(''); setSuccess(''); }}>
               {isLogin ? 'Sign Up' : 'Log In'}
             </a>
           </div>
