@@ -141,18 +141,20 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthSuccess }) => {
             <div className="input-group">
               <label>Username</label>
               <input 
+                key={isLogin ? 'login-username' : 'signup-username'}
                 type="text" 
                 placeholder="Username"
                 value={username} 
                 onChange={(e) => setUsername(e.target.value)} 
                 required 
-                autoComplete="off"
+                autoComplete="username"
               />
             </div>
 
             <div className="input-group">
               <label>Password</label>
               <input 
+                key={isLogin ? 'login-password' : 'signup-password'}
                 type="password" 
                 placeholder="Password"
                 value={password} 
