@@ -42,7 +42,7 @@ const BookingsList: React.FC = () => {
   const fetchBookings = async () => {
     setLoading(true);
     try {
-      const res = await fetch('http://localhost:8000/api/bookings/', {
+      const res = await fetch(${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/bookings/', {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('access_token')}`
         }
@@ -114,7 +114,7 @@ const BookingsList: React.FC = () => {
     setRatingData(prev => ({ ...prev, [booking.id]: { ...prev[booking.id], loading: true } }));
     
     try {
-      const res = await fetch('http://localhost:8000/api/ratings/', {
+      const res = await fetch(${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/ratings/', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

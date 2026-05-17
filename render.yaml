@@ -1,0 +1,38 @@
+databases:
+  - name: event-platform-db
+    databaseName: eventplatform
+    user: eventadmin
+    plan: free
+
+services:
+  - type: web
+    name: event-platform-backend
+    env: python
+    plan: free
+    buildCommand: "./event-platform/backend/build.sh"
+    startCommand: "cd event-platform/backend && gunicorn config.wsgi:application"
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: event-platform-db
+          property: connectionString
+      - key: SECRET_KEY
+        generateValue: true
+      - key: ALLOWED_HOSTS
+        value: "*"
+      - key: CORS_ALLOWED_ORIGINS
+        value: "https://event-platform-frontend.onrender.com"
+      - key: DEBUG
+        value: "False"
+      - key: PYTHON_VERSION
+        value: "3.11.0"
+  
+  - type: web
+    name: event-platform-frontend
+    env: static
+    plan: free
+    buildCommand: "cd event-platform/frontend && npm install && npm run build"
+    staticPublishPath: "./event-platform/frontend/dist"
+    envVars:
+      - key: VITE_API_URL
+        value: "https://event-platform-backend.onrender.com"

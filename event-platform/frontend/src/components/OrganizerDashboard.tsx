@@ -114,9 +114,9 @@ const OrganizerDashboard: React.FC<{ onBack: () => void }> = ({ onBack }) => {
       const token = localStorage.getItem('access_token');
       const headers = { 'Authorization': `Bearer ${token}` };
       const [catRes, eventRes, analyticRes] = await Promise.all([
-        fetch('http://localhost:8000/api/categories/', { headers }),
-        fetch('http://localhost:8000/api/events/?mine=true', { headers }),
-        fetch('http://localhost:8000/api/analytics/', { headers })
+        fetch(${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/categories/', { headers }),
+        fetch(${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/events/?mine=true', { headers }),
+        fetch(${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/analytics/', { headers })
       ]);
       const catData = await catRes.json();
       setCategories(catData);
@@ -147,7 +147,7 @@ const OrganizerDashboard: React.FC<{ onBack: () => void }> = ({ onBack }) => {
     e.preventDefault();
     try {
       const token = localStorage.getItem('access_token');
-      const url = editingEventId ? `http://localhost:8000/api/events/${editingEventId}/` : 'http://localhost:8000/api/events/';
+      const url = editingEventId ? `http://localhost:8000/api/events/${editingEventId}/` : ${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/events/';
       const method = editingEventId ? 'PATCH' : 'POST';
       
       const payload = {

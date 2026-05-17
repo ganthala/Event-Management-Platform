@@ -38,7 +38,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthSuccess }) => {
           localStorage.setItem('refresh_token', data.refresh);
           
           // Fetch user profile to get role
-          const profileRes = await fetch('http://localhost:8000/api/users/profile/', {
+          const profileRes = await fetch(${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/users/profile/', {
             headers: { 'Authorization': `Bearer ${data.access}` }
           });
           const profileData = await profileRes.json();

@@ -97,7 +97,7 @@ const EventDetails: React.FC<EventDetailsProps> = ({ eventId, onBack }) => {
     
     try {
       // 1. Create Booking
-      const bookingRes = await fetch('http://localhost:8000/api/bookings/', {
+      const bookingRes = await fetch(${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/bookings/', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -120,7 +120,7 @@ const EventDetails: React.FC<EventDetailsProps> = ({ eventId, onBack }) => {
       }
       
       // 2. Automate Mock Payment Verification (No popups)
-      const verifyRes = await fetch('http://localhost:8000/api/payments/verify-payment/', {
+      const verifyRes = await fetch(${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/payments/verify-payment/', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
