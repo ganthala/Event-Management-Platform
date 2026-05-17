@@ -62,7 +62,7 @@ const Discovery: React.FC<DiscoveryProps> = ({ onSelectEvent, isActive }) => {
 
   const fetchCategories = async () => {
     try {
-      const res = await fetch(${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/categories/');
+      const res = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/categories/`);
       const data = await res.json();
       setCategories(data);
     } catch (err) { console.error(err); }
@@ -71,7 +71,7 @@ const Discovery: React.FC<DiscoveryProps> = ({ onSelectEvent, isActive }) => {
   const fetchEvents = async () => {
     setLoading(true);
     try {
-      let url = ${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/events/';
+      let url = `${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/events/`;
       const params = new URLSearchParams();
       if (citySearch) params.append('search', citySearch);
       if (selectedCategory) params.append('category', selectedCategory);

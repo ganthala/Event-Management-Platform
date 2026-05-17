@@ -66,7 +66,7 @@ const AdminDashboard: React.FC<{ onBack: () => void }> = ({ onBack }) => {
 
     const fetchStats = async () => {
         try {
-            const response = await fetch(${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/users/admin/stats/', {
+            const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/users/admin/stats/`, {
                 headers: { 'Authorization': `Bearer ${localStorage.getItem('access_token')}` }
             });
             const data = await response.json();
@@ -81,7 +81,7 @@ const AdminDashboard: React.FC<{ onBack: () => void }> = ({ onBack }) => {
     const handleToggleStatus = async (userId: number, currentStatus: boolean) => {
         if (!window.confirm(`Are you sure you want to ${currentStatus ? 'deactivate' : 'activate'} this user?`)) return;
         try {
-            const res = await fetch(${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/users/admin/stats/', {
+            const res = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/users/admin/stats/`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
