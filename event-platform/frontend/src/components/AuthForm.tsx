@@ -73,8 +73,41 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthSuccess }) => {
           
           onAuthSuccess(data.access, userRole);
         } else {
-          setIsLogin(true);
-          setSuccess('Registration successful! Please login.');
+          setSuccess('Registration successful!');
+          
+          // Auto-login after 1 second (allows user to see success animation)
+          setTimeout(async () => {
+            try {
+              const loginRes = await fetch(`http://localhost:8000/api/users/login/`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username, password }),
+              });
+              
+              const loginData = await loginRes.json();
+              if (loginRes.ok) {
+                localStorage.setItem('access_token', loginData.access);
+                localStorage.setItem('refresh_token', loginData.refresh);
+                
+                // Fetch profile
+                const profileRes = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/users/profile/`, {
+                  headers: { 'Authorization': `Bearer ${loginData.access}` }
+                });
+                const profileData = await profileRes.json();
+                const userRole = profileData.role || 'attendee';
+                localStorage.setItem('user_role', userRole);
+                localStorage.setItem('username', profileData.username);
+                
+                onAuthSuccess(loginData.access, userRole);
+              } else {
+                setError(loginData.detail || 'Auto-login failed. Please login manually.');
+                setIsLogin(true);
+              }
+            } catch (err) {
+              setError('Auto-login connection failed. Please login manually.');
+              setIsLogin(true);
+            }
+          }, 1000);
         }
       } else {
         setError(data.detail || data.error || 'Something went wrong');
