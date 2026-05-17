@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 interface AuthFormProps {
   onAuthSuccess: (token: string, role: string) => void;
@@ -12,7 +12,30 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthSuccess }) => {
   const [role, setRole] = useState('attendee');
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [showSuccess, setShowSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (success) {
+      // Small timeout to allow element mounting before triggering transition
+      const showTimer = setTimeout(() => setShowSuccess(true), 50);
+
+      // Slide and fade out after 1 second (1000ms)
+      const hideTimer = setTimeout(() => {
+        setShowSuccess(false);
+        // Clean up the success text state after the 300ms transition finishes
+        const clearTimer = setTimeout(() => {
+          setSuccess('');
+        }, 300);
+        return () => clearTimeout(clearTimer);
+      }, 1000);
+
+      return () => {
+        clearTimeout(showTimer);
+        clearTimeout(hideTimer);
+      };
+    }
+  }, [success]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -93,7 +116,11 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthSuccess }) => {
             <p style={{ fontSize: '0.9rem' }}>Please enter your credentials.</p>
           </div>
 
-          {success && <div className="success-message">{success}</div>}
+          {success && (
+            <div className={`success-message ${showSuccess ? 'show' : ''}`}>
+              {success}
+            </div>
+          )}
           {error && <div className="error-message">{error}</div>}
 
           <form onSubmit={handleSubmit} autoComplete="off">
@@ -154,7 +181,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthSuccess }) => {
             <span style={{ color: 'var(--text-muted)' }}>
               {isLogin ? "Don't have an account? " : "Already have an account? "}
             </span>
-            <a href="#" onClick={(e) => { e.preventDefault(); setIsLogin(!isLogin); setError(''); setSuccess(''); }}>
+            <a href="#" onClick={(e) => { e.preventDefault(); setIsLogin(!isLogin); setError(''); setSuccess(''); setShowSuccess(false); }}>
               {isLogin ? 'Sign Up' : 'Log In'}
             </a>
           </div>
