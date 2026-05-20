@@ -2,12 +2,12 @@ from rest_framework import views, status, permissions
 from rest_framework.response import Response
 from django.conf import settings
 import os
-import razorpay
+# import razorpay
 from .models import Payment
 from bookings.models import Booking
 from bookings.emails import send_booking_confirmation
 
-client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
+# client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
 
 import stripe
 stripe.api_key = os.environ.get('STRIPE_SECRET_KEY', 'sk_test_placeholder')
