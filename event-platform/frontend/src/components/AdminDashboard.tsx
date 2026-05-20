@@ -126,7 +126,7 @@ const AdminDashboard: React.FC<{ onBack: () => void }> = ({ onBack }) => {
                     { label: 'Total Users', value: stats?.summary?.total_users, color: '#6366f1', icon: '👥' },
                     { label: 'Live Events', value: stats?.summary?.total_events, color: '#ec4899', icon: '🔥' },
                     { label: 'Total Bookings', value: stats?.summary?.total_bookings, color: '#10b981', icon: '🎫' },
-                    { label: 'Revenue/GMV', value: `₹${stats?.summary?.total_revenue || '1.2M'}`, color: '#f59e0b', icon: '💰' }
+                    { label: 'Revenue/GMV', value: stats?.summary?.total_revenue !== undefined ? `₹${stats.summary.total_revenue.toLocaleString('en-IN')}` : '₹1.2M', color: '#f59e0b', icon: '💰' }
                 ].map((stat, i) => (
                     <div key={i} className="glass-panel" style={{ padding: '1.5rem', display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
                         <div style={{ fontSize: '2rem', background: `${stat.color}22`, padding: '1rem', borderRadius: '1rem' }}>{stat.icon}</div>
@@ -159,6 +159,8 @@ const AdminDashboard: React.FC<{ onBack: () => void }> = ({ onBack }) => {
                     placeholder="Search by name or email..." 
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
+                    autoComplete="off"
+                    name="search-admin-users"
                     style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.1)', padding: '1rem 1.5rem', borderRadius: '1rem', color: '#fff', width: '350px', outline: 'none' }}
                 />
             </div>
@@ -234,6 +236,15 @@ const AdminDashboard: React.FC<{ onBack: () => void }> = ({ onBack }) => {
                         )}
                     </div>
                 ))}
+                {filteredUsers.length === 0 && (
+                    <div style={{ textAlign: 'center', padding: '4rem 2rem', background: 'rgba(255,255,255,0.02)', borderRadius: '1.5rem', border: '1px dashed rgba(255,255,255,0.1)' }}>
+                        <div style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>🔍</div>
+                        <div style={{ fontWeight: 'bold', fontSize: '1.2rem', marginBottom: '0.5rem' }}>No {activeTab} found</div>
+                        <div style={{ opacity: 0.5, fontSize: '0.9rem' }}>
+                            {searchTerm ? `Try clearing your search query for "${searchTerm}"` : `There are currently no registered ${activeTab}.`}
+                        </div>
+                    </div>
+                )}
             </div>
 
             {/* HISTORY MODAL (FULL AUDIT) */}

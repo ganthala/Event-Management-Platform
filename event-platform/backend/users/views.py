@@ -22,7 +22,7 @@ class AdminStatsView(views.APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request):
-        if request.user.role != 'admin':
+        if not (request.user.is_staff or request.user.is_superuser or request.user.role == 'admin'):
             return Response({"error": "Forbidden"}, status=403)
 
         # Get Attendees
@@ -126,14 +126,15 @@ class AdminStatsView(views.APIView):
                 "total_attendees": attendees_qs.count(),
                 "total_organizers": organizers_qs.count(),
                 "total_events": Event.objects.count(),
-                "total_bookings": Booking.objects.count()
+                "total_bookings": Booking.objects.count(),
+                "total_revenue": Booking.objects.filter(status='confirmed').aggregate(total=Sum('total_price'))['total'] or 0
             },
             "attendees": attendee_data,
             "organizers": organizer_data
         })
 
     def post(self, request):
-        if request.user.role != 'admin':
+        if not (request.user.is_staff or request.user.is_superuser or request.user.role == 'admin'):
             return Response({"error": "Forbidden"}, status=403)
         
         user_id = request.data.get('user_id')

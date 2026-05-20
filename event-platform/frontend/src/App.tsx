@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import AuthForm from './components/AuthForm';
 import Discovery from './components/Discovery';
 import EventDetails from './components/EventDetails';
@@ -9,18 +10,73 @@ import AdminDashboard from './components/AdminDashboard';
 import './index.css';
 
 function App() {
+  const navigate = useNavigate();
+  const location = useLocation();
+
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(!!localStorage.getItem('access_token'));
   const [userRole, setUserRole] = useState<string | null>(localStorage.getItem('user_role'));
-  const [view, setView] = useState<'auth' | 'discovery' | 'event' | 'bookings' | 'organizer' | 'nearby' | 'admin'>(
-    !!localStorage.getItem('access_token') ? 'discovery' : 'auth'
-  );
+  const [view, setView] = useState<'auth' | 'discovery' | 'event' | 'bookings' | 'organizer' | 'nearby' | 'admin'>(() => {
+    const token = localStorage.getItem('access_token');
+    const role = localStorage.getItem('user_role');
+    const isAdmin = localStorage.getItem('is_admin') === 'true' || role === 'admin';
+    if (token) {
+      return isAdmin ? 'admin' : 'discovery';
+    }
+    return 'auth';
+  });
   const [selectedEventId, setSelectedEventId] = useState<number | null>(null);
 
   useEffect(() => {
-    // Check initial auth state on load just in case it changes
-    setIsAuthenticated(!!localStorage.getItem('access_token'));
-    setUserRole(localStorage.getItem('user_role'));
+    const token = localStorage.getItem('access_token');
+    if (token) {
+      fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/users/profile/`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      })
+      .then(res => {
+        if (res.ok) return res.json();
+        throw new Error('Unauthorized');
+      })
+      .then(profileData => {
+        const isAdmin = !!(profileData.is_staff || profileData.is_superuser || profileData.role === 'admin');
+        const userRole = isAdmin ? 'admin' : (profileData.role || 'attendee');
+        
+        localStorage.setItem('user_role', userRole);
+        localStorage.setItem('is_admin', isAdmin ? 'true' : 'false');
+        localStorage.setItem('username', profileData.username);
+        
+        setUserRole(userRole);
+        if (isAdmin && location.pathname !== '/dashboard/admin') {
+          setView('admin');
+          navigate('/dashboard/admin');
+        }
+      })
+      .catch(err => {
+        console.error("Profile sync failed:", err);
+      });
+    }
   }, []);
+
+  useEffect(() => {
+    const token = localStorage.getItem('access_token');
+    const role = localStorage.getItem('user_role');
+    const isAdmin = localStorage.getItem('is_admin') === 'true' || role === 'admin';
+    
+    setIsAuthenticated(!!token);
+    setUserRole(role);
+
+    if (location.pathname === '/dashboard/admin') {
+      if (token && isAdmin) {
+        setView('admin');
+      } else {
+        navigate('/', { replace: true });
+        setView(token ? 'discovery' : 'auth');
+      }
+    } else {
+      if (view === 'admin') {
+        navigate('/dashboard/admin');
+      }
+    }
+  }, [location.pathname, view, navigate]);
 
   const handleSelectEvent = (id: number) => {
     setSelectedEventId(id);
@@ -30,6 +86,7 @@ function App() {
   const handleBackToDiscovery = () => {
     setSelectedEventId(null);
     setView('discovery');
+    navigate('/');
   };
 
   const handleAuthButtonClick = () => {
@@ -37,13 +94,23 @@ function App() {
       // Logout logic
       localStorage.removeItem('access_token');
       localStorage.removeItem('refresh_token');
+      localStorage.removeItem('user_role');
+      localStorage.removeItem('is_admin');
+      localStorage.removeItem('username');
       setIsAuthenticated(false);
+      setUserRole(null);
       setView('auth');
+      navigate('/');
       alert('Logged out successfully');
     } else {
       // Toggle login view
-      if (view === 'auth') setView('discovery');
-      else setView('auth');
+      if (view === 'auth') {
+        setView('discovery');
+        navigate('/');
+      } else {
+        setView('auth');
+        navigate('/');
+      }
     }
   };
 
@@ -103,10 +170,17 @@ function App() {
         </button>
       </div>
 
-      {view === 'auth' && <AuthForm onAuthSuccess={() => { 
+      {view === 'auth' && <AuthForm onAuthSuccess={(token, role) => { 
         setIsAuthenticated(true); 
-        setUserRole(localStorage.getItem('user_role'));
-        setView('discovery'); 
+        setUserRole(role);
+        const isAdmin = localStorage.getItem('is_admin') === 'true' || role === 'admin';
+        if (isAdmin) {
+          setView('admin');
+          navigate('/dashboard/admin');
+        } else {
+          setView('discovery');
+          navigate('/');
+        }
       }} />}
       
       {/* Persist Discovery Map in background to maintain filters and map position */}

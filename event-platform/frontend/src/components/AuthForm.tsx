@@ -67,8 +67,13 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthSuccess }) => {
             headers: { 'Authorization': `Bearer ${data.access}` }
           });
           const profileData = await profileRes.json();
-          const userRole = profileData.role || 'attendee';
+          
+          // Detect admin users using is_staff, is_superuser, or role
+          const isAdmin = !!(profileData.is_staff || profileData.is_superuser || profileData.role === 'admin');
+          const userRole = isAdmin ? 'admin' : (profileData.role || 'attendee');
+          
           localStorage.setItem('user_role', userRole);
+          localStorage.setItem('is_admin', isAdmin ? 'true' : 'false');
           localStorage.setItem('username', profileData.username);
           
           onAuthSuccess(data.access, userRole);
