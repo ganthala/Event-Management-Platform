@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from rest_framework.decorators import action
 from django.utils import timezone
 from django.conf import settings
-import razorpay
+# import razorpay
 from .models import Booking
 from .serializers import BookingSerializer
 from .emails import send_booking_confirmation, send_cancellation_confirmation, send_refund_confirmation
@@ -12,7 +12,7 @@ from events.models import TicketType
 import uuid
 
 # Initialize Razorpay client
-client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
+# client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
 
 class BookingViewSet(viewsets.ModelViewSet):
     serializer_class = BookingSerializer
